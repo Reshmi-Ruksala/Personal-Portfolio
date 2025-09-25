@@ -1,12 +1,13 @@
-import React from "react";
+
 import { Link } from "react-scroll";
-import './Navbar.css'; // Optional if you want separate CSS for navbar
-import React, { useState } from "react";
+import './Navbar.css';
+
 import React, { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -16,24 +17,42 @@ const Navbar = () => {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 50;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsOpen(false);
+  };
+
   return (
-    <nav className="navbar">
-      <h1>beWell+</h1>
+    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+      <h1>Reshmi Ruksala</h1>
 
       <div className={`nav-links ${isOpen ? "open" : ""}`}>
-        <a href="#home" onClick={() => setIsOpen(false)}>Home</a>
-        <a href="#about" onClick={() => setIsOpen(false)}>About</a>
-        <a href="#projects" onClick={() => setIsOpen(false)}>Projects</a>
-        <a href="#skills" onClick={() => setIsOpen(false)}>Skills</a>
-        <a href="#contact" onClick={() => setIsOpen(false)}>Contact</a>
-        <a href="#resume" onClick={() => setIsOpen(false)}>Resume</a>
+        <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
+        <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
+        <a href="#projects" onClick={(e) => { e.preventDefault(); scrollToSection('projects'); }}>Projects</a>
+        <a href="#skills" onClick={(e) => { e.preventDefault(); scrollToSection('skills'); }}>Skills</a>
+        <a href="#resume" onClick={(e) => { e.preventDefault(); scrollToSection('resume'); }}>Resume</a>
+        <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
 
         <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? "🌞" : "🌙"}
         </button>
       </div>
 
-      <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>
+      <div className={`hamburger ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
         <div className="bar"></div>
         <div className="bar"></div>
         <div className="bar"></div>
